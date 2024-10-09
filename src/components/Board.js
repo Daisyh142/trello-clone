@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import List from './List';
 import { DragDropContext } from 'react-beautiful-dnd';
-import { addCard as addCardUtil, updateListTitle as updateListTitleUtil } from '../utils/boardUtils';
+import { updateListTitle as updateListTitleUtil } from '../utils/boardUtils';
 
 const BoardContainer = styled.div`
   display: flex;
   padding: 20px;
   background: #f4f5f7;
-  height: calc(100vh - 60px); /* Adjust height to account for header */
+  height: calc(100vh - 60px);
   overflow-x: auto;
 `;
 
@@ -143,8 +143,28 @@ const Board = () => {
     setNewListTitle('');
   };
 
-  const addCard = (listId, content) => {
-    const newState = addCardUtil(data, listId, content);
+  const addCard = (listId, cardData) => {
+    const newCardId = `card-${Date.now()}`;
+    const newCard = {
+      id: newCardId,
+      ...cardData,
+    };
+
+    const newState = {
+      ...data,
+      cards: {
+        ...data.cards,
+        [newCardId]: newCard,
+      },
+      lists: {
+        ...data.lists,
+        [listId]: {
+          ...data.lists[listId],
+          cardIds: [...data.lists[listId].cardIds, newCardId],
+        },
+      },
+    };
+
     setData(newState);
   };
 
@@ -186,18 +206,16 @@ const Board = () => {
     setData(newState);
   };
 
-  const updateCardContent = (cardId, newContent) => {
-    const newCards = {
-      ...data.cards,
-      [cardId]: {
-        ...data.cards[cardId],
-        content: newContent,
-      },
-    };
-
+  const updateCard = (cardId, updatedCardData) => {
     const newState = {
       ...data,
-      cards: newCards,
+      cards: {
+        ...data.cards,
+        [cardId]: {
+          ...data.cards[cardId],
+          ...updatedCardData,
+        },
+      },
     };
 
     setData(newState);
@@ -209,7 +227,18 @@ const Board = () => {
         {data.listOrder.map(listId => {
           const list = data.lists[listId];
           const cards = list.cardIds.map(cardId => data.cards[cardId]);
-          return <List key={list.id} list={list} cards={cards} addCard={addCard} updateListTitle={updateListTitle} deleteList={deleteList} deleteCard={deleteCard} updateCardContent={updateCardContent} />;
+          return (
+            <List
+              key={list.id}
+              list={list}
+              cards={cards}
+              addCard={addCard}
+              updateListTitle={updateListTitle}
+              deleteList={deleteList}
+              deleteCard={deleteCard}
+              updateCard={updateCard}
+            />
+          );
         })}
         <AddListContainer>
           <AddListInput

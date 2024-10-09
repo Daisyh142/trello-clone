@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Draggable } from 'react-beautiful-dnd';
 import CardDetailsModal from './CardDetailsModal';
+import { Calendar, Tag, Paperclip, MessageSquare } from 'lucide-react';
 
 const CardContainer = styled.div`
   background: white;
@@ -9,12 +10,28 @@ const CardContainer = styled.div`
   padding: 8px;
   margin-bottom: 8px;
   box-shadow: 0 1px 0 rgba(9, 30, 66, 0.25);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  cursor: pointer;
 `;
 
-const Card = ({ card, index, deleteCard, updateCardContent }) => {
+const CardTitle = styled.div`
+  font-weight: bold;
+  margin-bottom: 8px;
+`;
+
+const CardMeta = styled.div`
+  display: flex;
+  font-size: 12px;
+  color: #5e6c84;
+  gap: 8px;
+`;
+
+const MetaItem = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+`;
+
+const Card = ({ card, index, deleteCard, updateCard }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => {
@@ -25,8 +42,8 @@ const Card = ({ card, index, deleteCard, updateCardContent }) => {
     setIsModalOpen(false);
   };
 
-  const handleSaveContent = (cardId, newContent) => {
-    updateCardContent(cardId, newContent);
+  const handleSaveCard = (cardId, updatedCardData) => {
+    updateCard(cardId, updatedCardData);
     handleCloseModal();
   };
 
@@ -40,7 +57,33 @@ const Card = ({ card, index, deleteCard, updateCardContent }) => {
             ref={provided.innerRef}
             onClick={handleOpenModal}
           >
-            {card.content}
+            <CardTitle>{card.title}</CardTitle>
+            <CardMeta>
+              {card.dueDate && (
+                <MetaItem>
+                  <Calendar size={14} />
+                  {new Date(card.dueDate).toLocaleDateString()}
+                </MetaItem>
+              )}
+              {card.labels && card.labels.length > 0 && (
+                <MetaItem>
+                  <Tag size={14} />
+                  {card.labels.length}
+                </MetaItem>
+              )}
+              {card.attachments && card.attachments.length > 0 && (
+                <MetaItem>
+                  <Paperclip size={14} />
+                  {card.attachments.length}
+                </MetaItem>
+              )}
+              {card.comments && card.comments.length > 0 && (
+                <MetaItem>
+                  <MessageSquare size={14} />
+                  {card.comments.length}
+                </MetaItem>
+              )}
+            </CardMeta>
           </CardContainer>
         )}
       </Draggable>
@@ -48,7 +91,7 @@ const Card = ({ card, index, deleteCard, updateCardContent }) => {
         <CardDetailsModal
           card={card}
           onClose={handleCloseModal}
-          onSave={handleSaveContent}
+          onSave={handleSaveCard}
           deleteCard={deleteCard}
         />
       )}

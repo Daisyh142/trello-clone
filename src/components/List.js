@@ -28,7 +28,7 @@ const TitleInput = styled.input`
 `;
 
 const CardList = styled.div`
-  min-height: 20px; // Ensures there's always space for dropping
+  min-height: 20px;
   padding: 8px 0;
 `;
 
@@ -85,16 +85,16 @@ const DeleteButton = styled.button`
   margin-top: 10px;
 `;
 
-const List = ({ list, cards, addCard, updateListTitle, deleteList, deleteCard, updateCardContent }) => {
-  const [newCardContent, setNewCardContent] = useState('');
+const List = ({ list, cards, addCard, updateListTitle, deleteList, deleteCard, updateCard }) => {
+  const [newCardTitle, setNewCardTitle] = useState('');
   const [isAddingCard, setIsAddingCard] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [newTitle, setNewTitle] = useState(list.title);
 
   const handleAddCard = () => {
-    if (newCardContent.trim() === '') return;
-    addCard(list.id, newCardContent);
-    setNewCardContent('');
+    if (newCardTitle.trim() === '') return;
+    addCard(list.id, { title: newCardTitle });
+    setNewCardTitle('');
     setIsAddingCard(false);
   };
 
@@ -133,7 +133,13 @@ const List = ({ list, cards, addCard, updateListTitle, deleteList, deleteCard, u
             ref={provided.innerRef}
           >
             {cards.map((card, index) => (
-              <Card key={card.id} card={card} index={index} deleteCard={deleteCard} updateCardContent={updateCardContent} />
+              <Card
+                key={card.id}
+                card={card}
+                index={index}
+                deleteCard={deleteCard}
+                updateCard={updateCard}
+              />
             ))}
             {provided.placeholder}
           </CardList>
@@ -142,8 +148,8 @@ const List = ({ list, cards, addCard, updateListTitle, deleteList, deleteCard, u
       {isAddingCard ? (
         <AddCardContainer>
           <AddCardInput
-            value={newCardContent}
-            onChange={(e) => setNewCardContent(e.target.value)}
+            value={newCardTitle}
+            onChange={(e) => setNewCardTitle(e.target.value)}
             placeholder="Enter a title for this card..."
             rows="3"
           />
