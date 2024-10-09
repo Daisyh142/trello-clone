@@ -27,6 +27,11 @@ const TitleInput = styled.input`
   box-sizing: border-box;
 `;
 
+const CardList = styled.div`
+  min-height: 20px; // Ensures there's always space for dropping
+  padding: 8px 0;
+`;
+
 const AddCardButton = styled.button`
   background: transparent;
   color: #5e6c84;
@@ -109,41 +114,46 @@ const List = ({ list, cards, addCard, updateListTitle, deleteList, deleteCard, u
   };
 
   return (
-    <Droppable droppableId={list.id}>
-      {(provided) => (
-        <ListContainer {...provided.droppableProps} ref={provided.innerRef}>
-          {isEditingTitle ? (
-            <TitleInput
-              type="text"
-              value={newTitle}
-              onChange={handleTitleChange}
-              onBlur={handleTitleBlur}
-              autoFocus
-            />
-          ) : (
-            <ListTitle onClick={() => setIsEditingTitle(true)}>{list.title}</ListTitle>
-          )}
-          {cards.map((card, index) => (
-            <Card key={card.id} card={card} index={index} deleteCard={deleteCard} updateCardContent={updateCardContent} />
-          ))}
-          {provided.placeholder}
-          {isAddingCard ? (
-            <AddCardContainer>
-              <AddCardInput
-                value={newCardContent}
-                onChange={(e) => setNewCardContent(e.target.value)}
-                placeholder="Enter a title for this card..."
-                rows="3"
-              />
-              <SaveCardButton onClick={handleAddCard}>Add Card</SaveCardButton>
-            </AddCardContainer>
-          ) : (
-            <AddCardButton onClick={() => setIsAddingCard(true)}>+ Add a card</AddCardButton>
-          )}
-          <DeleteButton onClick={handleDeleteList}>Delete List</DeleteButton>
-        </ListContainer>
+    <ListContainer>
+      {isEditingTitle ? (
+        <TitleInput
+          type="text"
+          value={newTitle}
+          onChange={handleTitleChange}
+          onBlur={handleTitleBlur}
+          autoFocus
+        />
+      ) : (
+        <ListTitle onClick={() => setIsEditingTitle(true)}>{list.title}</ListTitle>
       )}
-    </Droppable>
+      <Droppable droppableId={list.id}>
+        {(provided) => (
+          <CardList
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+          >
+            {cards.map((card, index) => (
+              <Card key={card.id} card={card} index={index} deleteCard={deleteCard} updateCardContent={updateCardContent} />
+            ))}
+            {provided.placeholder}
+          </CardList>
+        )}
+      </Droppable>
+      {isAddingCard ? (
+        <AddCardContainer>
+          <AddCardInput
+            value={newCardContent}
+            onChange={(e) => setNewCardContent(e.target.value)}
+            placeholder="Enter a title for this card..."
+            rows="3"
+          />
+          <SaveCardButton onClick={handleAddCard}>Add Card</SaveCardButton>
+        </AddCardContainer>
+      ) : (
+        <AddCardButton onClick={() => setIsAddingCard(true)}>+ Add a card</AddCardButton>
+      )}
+      <DeleteButton onClick={handleDeleteList}>Delete List</DeleteButton>
+    </ListContainer>
   );
 };
 
