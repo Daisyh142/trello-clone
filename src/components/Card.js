@@ -31,7 +31,7 @@ const MetaItem = styled.span`
   gap: 4px;
 `;
 
-const Card = ({ card, index, deleteCard, updateCard }) => {
+const Card = ({ card, index, deleteCard, updateCard, listTitle }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => {
@@ -90,6 +90,7 @@ const Card = ({ card, index, deleteCard, updateCard }) => {
       {isModalOpen && (
         <CardDetailsModal
           card={card}
+          listTitle={listTitle}
           onClose={handleCloseModal}
           onSave={handleSaveCard}
           deleteCard={deleteCard}

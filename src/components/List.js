@@ -139,6 +139,7 @@ const List = ({ list, cards, addCard, updateListTitle, deleteList, deleteCard, u
                 index={index}
                 deleteCard={deleteCard}
                 updateCard={updateCard}
+                listTitle={list.title}  // Pass the list title to each Card
               />
             ))}
             {provided.placeholder}
